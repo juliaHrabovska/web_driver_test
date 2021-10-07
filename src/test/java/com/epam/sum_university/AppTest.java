@@ -5,11 +5,16 @@ import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.epam.sum_university.Properties.GIT_HUB_LOGIN;
+import static com.epam.sum_university.Properties.GIT_HUB_PASS;
 import static org.testng.Assert.assertTrue;
 
 
@@ -106,6 +111,75 @@ public class AppTest {
 //                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id=\\\"sc-active-cart\\\"]//h1")));
 
         driver.close();
+        driver.quit();
+    }
+
+    @Test
+    public void gitHubLoginTest() {
+        System.setProperty(
+                "webdriver.chrome.driver",
+                "/Users/Yuliia_Hrabovska/IdeaProjects/web_driver_test/src/test/resources/webdriver/chromedriver");
+
+        WebDriver driver = new ChromeDriver();
+
+        driver.manage().window().maximize();
+        driver.get("https://github.com/login");
+
+        WebElement loginField = driver.findElement(By.id("login_field"));
+        loginField.sendKeys(GIT_HUB_LOGIN);
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.sendKeys(GIT_HUB_PASS);
+
+        WebElement signInButton = driver.findElement(By.name("commit"));
+        signInButton.click();
+
+        WebElement profileDropDownButton = driver.findElement(By.xpath("//summary[@class=\"Header-link\"]/img"));
+        profileDropDownButton.click();
+
+        WebElement userInformationLabel = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//strong[text()=\"juliaHrabovska\"]")));
+
+//        WebElement userInformationLabel = driver.findElement(By.xpath("//strong[text()=\"juliaHrabovska\"]"));
+        Assert.assertEquals("juliaHrabovska", userInformationLabel.getText());
+
+        driver.quit();
+    }
+
+    @DataProvider(name = "wrongCredentials")
+    public Object[][] wrongCredentials() {
+        return new Object[][] {
+                {"qwerty", GIT_HUB_PASS},
+                {GIT_HUB_LOGIN, "qwerty"},
+                {"qwerty", "qwerty"}
+        };
+    }
+
+    @Test(dataProvider = "wrongCredentials")
+    public void gitHubLoginNegativeTest(String login, String pass) {
+        System.setProperty(
+                "webdriver.chrome.driver",
+                "/Users/Yuliia_Hrabovska/IdeaProjects/web_driver_test/src/test/resources/webdriver/chromedriver");
+
+        WebDriver driver = new ChromeDriver();
+
+        driver.manage().window().maximize();
+        driver.get("https://github.com/login");
+
+        WebElement loginField = driver.findElement(By.id("login_field"));
+        loginField.sendKeys(login);
+
+        WebElement passwordField = driver.findElement(By.id("password"));
+        passwordField.sendKeys(pass);
+
+        WebElement signInButton = driver.findElement(By.name("commit"));
+        signInButton.click();
+
+        WebElement errorLabel = new WebDriverWait(driver, 10)
+                .until(ExpectedConditions.visibilityOfElementLocated(By.id("js-flash-container")));
+
+        Assert.assertEquals("Incorrect username or password.", errorLabel.getText());
+
         driver.quit();
     }
 }
