@@ -25,6 +25,6 @@ public class LoginTest extends BaseTest {
                         .openProfileDropDown()
                                 .getUserInformationLabel();
 
-        Assert.assertEquals("juliaHrabovska", userInformation);
+        Assert.assertEquals("juliaHrabovska", userInformation, "User nicks are nor equals");
     }
 }
