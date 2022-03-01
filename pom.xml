@@ -32,12 +32,13 @@
       <scope>test</scope>
     </dependency>
 
-<!--    &lt;!&ndash; https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager &ndash;&gt;-->
-<!--    <dependency>-->
-<!--      <groupId>io.github.bonigarcia</groupId>-->
-<!--      <artifactId>webdrivermanager</artifactId>-->
-<!--      <version>5.0.3</version>-->
-<!--    </dependency>-->
+    <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>5.0.3</version>
+    </dependency>
+
 
   </dependencies>
 
@@ -90,8 +91,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>8</source>
-          <target>8</target>
+          <source>14</source>
+          <target>14</target>
         </configuration>
       </plugin>
     </plugins>
