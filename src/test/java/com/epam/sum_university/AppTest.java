@@ -116,6 +116,9 @@ public class AppTest {
         driver.manage().window().maximize();
         driver.get("https://github.com/login");
 
+        WebElement logo = driver.findElement(By.xpath("//a[@class=\"header-logo\"]"));
+        Assert.assertTrue(logo.isDisplayed());
+        
         WebElement loginField = driver.findElement(By.id("login_field"));
         loginField.sendKeys(GIT_HUB_LOGIN);
 
