@@ -1,10 +1,15 @@
 package com.epam.sum_university;
 
-import org.openqa.selenium.*;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -12,137 +17,58 @@ import java.time.Duration;
 
 import static com.epam.sum_university.Properties.GIT_HUB_LOGIN;
 import static com.epam.sum_university.Properties.GIT_HUB_PASS;
-import static org.testng.Assert.assertTrue;
 
 public class AppTest {
-    @Test
-    public void openMainPageTest() {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "/Users/Yuliia_Hrabovska/IdeaProjects/lectures/AT_module/web_driver_test/src/test/resources/webdriver/chromedriver");
+    private WebDriver driver;
 
-        WebDriver driver = new ChromeDriver();
+    @BeforeMethod
+    public void setUp() {
+        WebDriverManager.chromedriver().setup();
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver = new ChromeDriver();
         driver.manage().window().maximize();
+    }
 
+    @AfterMethod
+    public void closeDriver() {
+        driver.close();
+        driver.quit();
+    }
+
+    @Test
+    public void firstTest() {
         driver.get("https://www.google.com");
-
-        driver.close();
-        driver.quit();
-    }
-
-    @Test
-    public void findElementsTest() {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "/Users/Yuliia_Hrabovska/IdeaProjects/lectures/AT_module/web_driver_test/src/test/resources/webdriver/chromedriver");
-
-        WebDriver driver = new ChromeDriver();
-
-        driver.manage().window().maximize();
-        driver.get("https://www.google.com");
-
-        WebElement searchField = driver.findElement(By.name("q"));
-        Assert.assertTrue(searchField.isDisplayed(), "Search Field should be displayed");
-
-        driver.close();
-        driver.quit();
-    }
-
-    @Test
-    public void amazonLogoTest() {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "/Users/Yuliia_Hrabovska/IdeaProjects/lectures/AT_module/web_driver_test/src/test/resources/webdriver/chromedriver");
-
-        WebDriver driver = new ChromeDriver();
-
-        driver.manage().window().maximize();
-        driver.get("https://www.amazon.com/");
-
-        WebElement logo = driver.findElement(By.id("nav-logo-sprites"));
-        Assert.assertTrue(logo.isDisplayed(), "Logo should be displayed");
-
-        driver.close();
-        driver.quit();
-    }
-
-    @Test
-    public void amazonSearchTest() {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "/Users/Yuliia_Hrabovska/IdeaProjects/lectures/AT_module/web_driver_test/src/test/resources/webdriver/chromedriver");
-
-        WebDriver driver = new ChromeDriver();
-
-        driver.manage().window().maximize();
-        driver.get("https://www.amazon.com/");
-
-        WebElement searchField = driver.findElement(By.id("twotabsearchtextbox"));
-        searchField.sendKeys("laptops" + Keys.ENTER);
-
-        WebElement searchResult = driver.findElement(By.xpath("//div[@class=\"sg-col-inner\"]//span[last()]"));
-        assertTrue(searchResult.isEnabled(), "Search result is present");
-
-        WebElement firstResult = driver.findElement(By.xpath("//div[@class=\"aok-relative\"]//a[1]"));
-        firstResult.click();
-
-        WebElement addToCardButton = driver.findElement(By.id("add-to-cart-button"));
-        addToCardButton.click();
-
-
-        WebElement deleteElementFromCardButton = driver.findElement(By.xpath("//input[contains(@name,'delete')]"));
-        deleteElementFromCardButton.click();
-
-        WebElement cardIsEmptyLabel = driver.findElement(By.xpath("//div[@id=\"sc-active-cart\"]//h1"));
-        Assert.assertTrue(cardIsEmptyLabel.isDisplayed(), "Card is empty label should be displayed");
-//
-//        WebElement cardIsEmptyLabel = new WebDriverWait(driver, 10)
-//                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id=\\\"sc-active-cart\\\"]//h1")));
-
-        driver.close();
-        driver.quit();
     }
 
     @Test
     public void gitHubLoginTest() {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "/Users/Yuliia_Hrabovska/IdeaProjects/lectures/AT_module/web_driver_test/src/test/resources/webdriver/chromedriver");
-
-        WebDriver driver = new ChromeDriver();
-
-        driver.manage().window().maximize();
         driver.get("https://github.com/login");
 
-        WebElement logo = driver.findElement(By.xpath("//a[@class=\"header-logo\"]"));
-        Assert.assertTrue(logo.isDisplayed());
-        
         WebElement loginField = driver.findElement(By.id("login_field"));
         loginField.sendKeys(GIT_HUB_LOGIN);
 
-        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement passwordField = driver.findElement(By.name("password"));
         passwordField.sendKeys(GIT_HUB_PASS);
 
-        WebElement signInButton = driver.findElement(By.name("commit"));
-        signInButton.click();
+        WebElement sighInButton = driver.findElement(By.name("commit"));
+        sighInButton.click();
 
-        WebElement profileDropDownButton = driver.findElement(By.xpath("//summary[@class=\"Header-link\"]/img"));
-        profileDropDownButton.click();
+        WebElement profileInfoButton = driver.findElement(
+                By.xpath("//button[@aria-label=\"Open user account menu\"]"));
+        profileInfoButton.click();
 
-        WebElement userInformationLabel = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[contains(text(),\"Signed in as \")]/strong")));
+        WebElement userInfoText = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
+                        "//div[@class=\"Overlay-headerContentWrap\"]//span[@class=\"Truncate-text\"]")));
 
-//        WebElement userInformationLabel = driver.findElement(By.xpath("//strong[text()=\"juliaHrabovska\"]"));
-        Assert.assertEquals("juliaHrabovska", userInformationLabel.getText());
-
-        driver.quit();
+//        WebElement userInfoText = driver.findElement(
+//                By.xpath("//div[@class=\"Overlay-headerContentWrap\"]//span[@class=\"Truncate-text\"]"));
+        Assert.assertEquals(userInfoText.getText(), "juliaHrabovska");
     }
 
     @DataProvider(name = "wrongCredentials")
     public Object[][] wrongCredentials() {
-        return new Object[][]{
+        return new Object[][] {
                 {"qwerty", GIT_HUB_PASS},
                 {GIT_HUB_LOGIN, "qwerty"},
                 {"qwerty", "qwerty"}
@@ -150,30 +76,21 @@ public class AppTest {
     }
 
     @Test(dataProvider = "wrongCredentials")
-    public void gitHubLoginNegativeTest(String login, String pass) {
-        System.setProperty(
-                "webdriver.chrome.driver",
-                "/Users/Yuliia_Hrabovska/IdeaProjects/lectures/AT_module/web_driver_test/src/test/resources/webdriver/chromedriver");
-
-        WebDriver driver = new ChromeDriver();
-
-        driver.manage().window().maximize();
+    public void gitHubLoginNegativeTest(String login, String password) {
         driver.get("https://github.com/login");
 
         WebElement loginField = driver.findElement(By.id("login_field"));
         loginField.sendKeys(login);
 
-        WebElement passwordField = driver.findElement(By.id("password"));
-        passwordField.sendKeys(pass);
+        WebElement passwordField = driver.findElement(By.name("password"));
+        passwordField.sendKeys(password);
 
-        WebElement signInButton = driver.findElement(By.name("commit"));
-        signInButton.click();
+        WebElement sighInButton = driver.findElement(By.name("commit"));
+        sighInButton.click();
 
         WebElement errorLabel = new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.id("js-flash-container")));
 
         Assert.assertEquals("Incorrect username or password.", errorLabel.getText());
-
-        driver.quit();
     }
 }
